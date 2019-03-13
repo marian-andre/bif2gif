@@ -17,6 +17,10 @@ node index.js <PATH_TO_BIF_FILE>
 - GIF file will be generated in the root folder of this project.
 - GIF file will be named `animated.gif`
 
+## TODO
+
+- Add lambda support
+
 ## Changelog
 
 #### v0.1.0
