@@ -1,28 +1,18 @@
-# NodeBIF2GIF
+# nodeBIF2GIF
 
-## Installation
+## Architecture
 
-```
-npm install
-```
+- `./BIF` folder: Original C# program, BIF file example, binary compiled .exe program
+- `./node` folder: NodeJS Implementation
+- `./rust` folder: Rust Implementation
 
-## Usage
+`./BIF` folder won't be modified.
 
-```
-node index.js <PATH_TO_BIF_FILE>
-```
+## Installation, Usage, TODO and Changelog
+
+See `./node/README.md` file or `./rust/README.md` file
 
 ## Information
 
 - GIF file will be generated in the root folder of this project.
 - GIF file will be named `animated.gif`
-
-## TODO
-
-- Add lambda support
-
-## Changelog
-
-#### v0.1.0
-
-- First version
