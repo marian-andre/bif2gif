@@ -1,4 +1,9 @@
-# nodeBIF2GIF
+# BIF2GIF
+
+## Languages
+
+- NodeJS
+- Rust
 
 ## Architecture
 
