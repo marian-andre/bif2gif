@@ -24,20 +24,20 @@ function main (bifFile) {
   console.log('Images count: ' + imageCount);
   console.log('Delay between images (milliseconds): ' + imageInterval);
 
-  let curentBit = 64; // First index of non-header data in the BIF file
+  let curentByte = 64; // First index of non-header data in the BIF file
   let dimensions = null; // Image dimensions
   let encode = null; // Gif Encoder
   let canvas = null; // Canvas for 1 image
   let ctx = null; // Canvas context where images will be written in
   let gifStream = null; // Final GIF buffer
   for (let i = 0; i < imageCount; i++) {
-    const bitRangeIn = buffer.readInt32LE(curentBit + 4); // Get start bit of the current image
-    const bitRangeOut = buffer.readInt32LE(curentBit + 12) - 1; // Get end bit of the current image
-    const bitRangeSize = bitRangeOut - bitRangeIn; // Get bit count related to the current image
+    const byteRangeIn = buffer.readInt32LE(curentByte + 4); // Get start byte of the current image
+    const byteRangeOut = buffer.readInt32LE(curentByte + 12) - 1; // Get end byte of the current image
+    const byteRangeSize = byteRangeOut - byteRangeIn; // Get byte count related to the current image
 
-    console.log("#" + i + ": ByteStart=" + bitRangeIn + " ByteEnd=" + bitRangeOut + " ByteSize=" + bitRangeSize);
+    console.log("#" + i + ": ByteStart=" + byteRangeIn + " ByteEnd=" + byteRangeOut + " ByteSize=" + byteRangeSize);
 
-    const currentImageBuffer = buffer.slice(bitRangeIn, bitRangeOut); // Create a new buffer for the current image
+    const currentImageBuffer = buffer.slice(byteRangeIn, byteRangeOut); // Create a new buffer for the current image
 
     // if any one of output variable is not filled yet
     if (dimensions === null || encoder === null || canvas === null || ctx === null) {
@@ -63,7 +63,7 @@ function main (bifFile) {
 
     encoder.addFrame(ctx); // Add current ctx to the GIF encoder
 
-    curentBit += 8; // Forward in the buffer to be at the next image info
+    curentByte += 8; // Forward in the buffer to be at the next image info
   }
 
   if (encoder) {
