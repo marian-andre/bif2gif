@@ -31,13 +31,13 @@ function main (bifFile) {
   let ctx = null; // Canvas context where images will be written in
   let gifStream = null; // Final GIF buffer
   for (let i = 0; i < imageCount; i++) {
-    const byteRangeIn = buffer.readInt32LE(curentByte + 4); // Get start byte of the current image
-    const byteRangeOut = buffer.readInt32LE(curentByte + 12) - 1; // Get end byte of the current image
-    const byteRangeSize = byteRangeOut - byteRangeIn; // Get byte count related to the current image
+    const byteCurrentImageIn = buffer.readInt32LE(curentByte + 4); // Get start byte of the current image
+    const byteNextImageIn = buffer.readInt32LE(curentByte + 12); // Get end byte of the current image
 
-    console.log("#" + i + ": ByteStart=" + byteRangeIn + " ByteEnd=" + byteRangeOut + " ByteSize=" + byteRangeSize);
+    console.log("#" + i + ": ByteStart=" + byteCurrentImageIn + " ByteEnd=" + byteNextImageIn);
 
-    const currentImageBuffer = buffer.slice(byteRangeIn, byteRangeOut); // Create a new buffer for the current image
+    const currentImageBuffer = buffer.slice(byteCurrentImageIn, byteNextImageIn); // Create a new buffer for the current image
+    // Because second parameter of the slice function is not inclusive, we give the first byte of the next image
 
     // if any one of output variable is not filled yet
     if (dimensions === null || encoder === null || canvas === null || ctx === null) {
