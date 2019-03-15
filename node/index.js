@@ -29,21 +29,21 @@ function main (bifFile) {
   let canvas = null; // Canvas for 1 image
   let ctx = null; // Canvas context where images will be written in
   let gifStream = null; // Final GIF buffer
-  let lastImageDelay = 10;
+  let imageDelay = 10;
   for (let i = 0; i < imageCount; i++) {
     if (i < imageCount){
       const byteCurrentImageTimestamp = buffer.readInt32LE(curentByte); // Get start byte of the current image
       const byteNextImageTimestamp = buffer.readInt32LE(curentByte + 8); // Get start byte of the current image
 
       if (byteNextImageTimestamp !== -1) {
-        lastImageDelay = (byteNextImageTimestamp - byteCurrentImageTimestamp) * timestampMultiplier;
+        imageDelay = (byteNextImageTimestamp - byteCurrentImageTimestamp) * timestampMultiplier;
       }
     }
 
     const byteCurrentImageIn = buffer.readInt32LE(curentByte + 4); // Get start byte of the current image
     const byteNextImageIn = buffer.readInt32LE(curentByte + 12); // Get end byte of the current image
 
-    console.log("#" + i + ": ByteStart=" + byteCurrentImageIn + " ByteEnd=" + byteNextImageIn + " Delay(ms)=" + lastImageDelay);
+    console.log("#" + i + ": ByteStart=" + byteCurrentImageIn + " ByteEnd=" + byteNextImageIn + " Delay(ms)=" + imageDelay);
 
     const currentImageBuffer = buffer.slice(byteCurrentImageIn, byteNextImageIn); // Create a new buffer for the current image
     // Because second parameter of the slice function is not inclusive, we give the first byte of the next image
@@ -69,7 +69,7 @@ function main (bifFile) {
     // It is not needed to empty the context after writing image in the context
     // Because all image will have the same size
 
-    encoder.setDelay(lastImageDelay);  // frame delay in ms
+    encoder.setDelay(imageDelay);  // frame delay in ms
     encoder.addFrame(ctx); // Add current ctx to the GIF encoder
 
     curentByte += 8; // Forward in the buffer to be at the next image info
