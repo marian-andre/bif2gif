@@ -6,6 +6,8 @@ const { createCanvas, Image } = require('canvas');
 // BIF file standard
 // https://sdkdocs.roku.com/display/sdkdoc/Trick+Mode+Support#TrickModeSupport-BIFFileSpecification
 
+const BIF_VERSION_COMPATIBILITY = 0;
+
 function main (bifFile) {
   if (!fs.existsSync(bifFile)) {
     throw 'File does not exist';
@@ -18,7 +20,15 @@ function main (bifFile) {
 
   fs.closeSync(fdRead); // Close file descriptor
 
-  const imageCount = buffer.readInt32LE(12, 4); // Get image count
+  const bifVersion = buffer.readUInt32LE(8, 4); // Get bif version
+  // Current supported version of this script is 0
+
+  if (bifVersion != BIF_VERSION_COMPATIBILITY) {
+    console.log('WARNING: This script was made to work with version 0 of BIF file');
+    console.log('         The version of this BIF file is ' + bifVersion);
+  }
+
+  const imageCount = buffer.readUInt32LE(12, 4); // Get image count
   const timestampMultiplier = buffer.readInt32LE(16, 4); // Get timestamp multiplier
 
   console.log('Images count: ' + imageCount);
@@ -31,16 +41,16 @@ function main (bifFile) {
   let gifStream = null; // Final GIF buffer
   let imageDelay = 10;
   for (let i = 0; i < imageCount; i++) {
-    // Last image of the BIF file does not have a valid timestamp
+    // Last image of the BIF file has a crazy timestamp (0xffffffff)
     if (i < imageCount - 1) {
-      const byteCurrentImageTimestamp = buffer.readInt32LE(curentByte); // Get start timestamp of the current image
-      const byteNextImageTimestamp = buffer.readInt32LE(curentByte + 8); // Get start timestamp of the next image
+      const byteCurrentImageTimestamp = buffer.readUInt32LE(curentByte); // Get start timestamp of the current image
+      const byteNextImageTimestamp = buffer.readUInt32LE(curentByte + 8); // Get start timestamp of the next image
 
       imageDelay = (byteNextImageTimestamp - byteCurrentImageTimestamp) * timestampMultiplier;
     }
 
-    const byteCurrentImageIn = buffer.readInt32LE(curentByte + 4); // Get start byte of the current image
-    const byteNextImageIn = buffer.readInt32LE(curentByte + 12); // Get end byte of the current image
+    const byteCurrentImageIn = buffer.readUInt32LE(curentByte + 4); // Get start byte of the current image
+    const byteNextImageIn = buffer.readUInt32LE(curentByte + 12); // Get end byte of the current image
 
     console.log("#" + i + ": ByteStart=" + byteCurrentImageIn + " ByteEnd=" + byteNextImageIn + " Delay(ms)=" + imageDelay);
 
