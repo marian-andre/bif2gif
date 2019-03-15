@@ -31,13 +31,12 @@ function main (bifFile) {
   let gifStream = null; // Final GIF buffer
   let imageDelay = 10;
   for (let i = 0; i < imageCount; i++) {
-    if (i < imageCount){
-      const byteCurrentImageTimestamp = buffer.readInt32LE(curentByte); // Get start byte of the current image
-      const byteNextImageTimestamp = buffer.readInt32LE(curentByte + 8); // Get start byte of the current image
+    // Last image of the BIF file does not have a valid timestamp
+    if (i < imageCount - 1) {
+      const byteCurrentImageTimestamp = buffer.readInt32LE(curentByte); // Get start timestamp of the current image
+      const byteNextImageTimestamp = buffer.readInt32LE(curentByte + 8); // Get start timestamp of the next image
 
-      if (byteNextImageTimestamp !== -1) {
-        imageDelay = (byteNextImageTimestamp - byteCurrentImageTimestamp) * timestampMultiplier;
-      }
+      imageDelay = (byteNextImageTimestamp - byteCurrentImageTimestamp) * timestampMultiplier;
     }
 
     const byteCurrentImageIn = buffer.readInt32LE(curentByte + 4); // Get start byte of the current image
